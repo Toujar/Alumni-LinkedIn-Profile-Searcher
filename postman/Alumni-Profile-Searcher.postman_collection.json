@@ -1,0 +1,209 @@
+{
+  "info": {
+    "name": "Alumni LinkedIn Profile Searcher",
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "description": "Postman collection for the Alumni LinkedIn Profile Searcher API.\n\nSet the `baseUrl` variable to `http://localhost:8080` before running.\n\nPrerequisites:\n- Application is running (`./mvnw spring-boot:run`)\n- PostgreSQL is running (`docker compose up -d`)\n- PhantomBuster environment variables are set in .env",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Search Alumni",
+      "item": [
+        {
+          "name": "Search Alumni — Valid Request (with passoutYear)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"university\": \"University of XYZ\",\n  \"designation\": \"Software Engineer\",\n  \"passoutYear\": 2020\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alumni/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alumni", "search"]
+            },
+            "description": "Searches for Software Engineer alumni from University of XYZ who graduated in 2020.\n\nExpected: 200 OK with matched alumni profiles in data array."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Alumni — Without passoutYear (optional field omitted)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"university\": \"MIT\",\n  \"designation\": \"Data Scientist\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alumni/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alumni", "search"]
+            },
+            "description": "Searches without a graduation year filter (passoutYear is optional).\n\nExpected: 200 OK."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Alumni — Missing University (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"designation\": \"Software Engineer\",\n  \"passoutYear\": 2020\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alumni/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alumni", "search"]
+            },
+            "description": "Omits the required `university` field.\n\nExpected: 400 Bad Request with validation error message."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Alumni — Missing Designation (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"university\": \"University of XYZ\",\n  \"passoutYear\": 2020\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alumni/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alumni", "search"]
+            },
+            "description": "Omits the required `designation` field.\n\nExpected: 400 Bad Request with validation error message."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Alumni — Invalid passoutYear Too Old (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"university\": \"University of XYZ\",\n  \"designation\": \"Software Engineer\",\n  \"passoutYear\": 1900\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alumni/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alumni", "search"]
+            },
+            "description": "Sends a passoutYear of 1900, below the minimum of 1950.\n\nExpected: 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Alumni — Both Fields Missing (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alumni/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alumni", "search"]
+            },
+            "description": "Sends an empty body — both required fields missing.\n\nExpected: 400 Bad Request with both validation messages."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Get All Alumni",
+      "item": [
+        {
+          "name": "Get All Saved Alumni",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/alumni/all",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alumni", "all"]
+            },
+            "description": "Retrieves all alumni profiles currently saved in the database.\n\nExpected: 200 OK with data array (may be empty if no searches have been performed)."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+# =============================================================================
+# Git ignore — Alumni LinkedIn Profile Searcher
+# =============================================================================
+
+# Secrets — never commit
+.env
+
+# Maven build output
+target/
+*.class
+*.jar
+*.war
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+.settings/
+.classpath
+.project
+.factorypath
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Spring Boot devtools restart trigger
+.reloadtrigger
+
+# Logs
+*.log
+logs/
