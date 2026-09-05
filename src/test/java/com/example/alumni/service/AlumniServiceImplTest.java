@@ -40,6 +40,9 @@ class AlumniServiceImplTest {
     @Mock
     private AlumniMapper alumniMapper;
 
+    @Mock
+    private AlumniPersistenceService persistenceService;
+
     @InjectMocks
     private AlumniServiceImpl alumniService;
 
@@ -95,7 +98,7 @@ class AlumniServiceImplTest {
                 .thenReturn(Optional.empty());
         when(alumniMapper.toEntity(sampleProfile, "University of XYZ", null))
                 .thenReturn(sampleEntity);
-        when(alumniRepository.saveAll(anyList()))
+        when(persistenceService.saveAll(anyList()))
                 .thenReturn(List.of(sampleEntity));
         when(alumniMapper.toResponse(sampleEntity))
                 .thenReturn(sampleResponse);
@@ -109,7 +112,7 @@ class AlumniServiceImplTest {
         assertThat(result.get(0).getUniversity()).isEqualTo("University of XYZ");
 
         verify(phantomBusterClient).searchAlumni(baseRequest);
-        verify(alumniRepository).saveAll(anyList());
+        verify(persistenceService).saveAll(anyList());
     }
 
     @Test
@@ -131,7 +134,7 @@ class AlumniServiceImplTest {
                 .thenReturn(Optional.empty());
         when(alumniMapper.toEntity(eq(sampleProfile), any(), any())).thenReturn(sampleEntity);
         when(alumniMapper.toEntity(eq(profile2), any(), any())).thenReturn(entity2);
-        when(alumniRepository.saveAll(anyList())).thenReturn(List.of(sampleEntity, entity2));
+        when(persistenceService.saveAll(anyList())).thenReturn(List.of(sampleEntity, entity2));
         when(alumniMapper.toResponse(sampleEntity)).thenReturn(sampleResponse);
         when(alumniMapper.toResponse(entity2)).thenReturn(response2);
 
@@ -143,7 +146,7 @@ class AlumniServiceImplTest {
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<Alumni>> saveCaptor = ArgumentCaptor.forClass(List.class);
-        verify(alumniRepository).saveAll(saveCaptor.capture());
+        verify(persistenceService).saveAll(saveCaptor.capture());
         assertThat(saveCaptor.getValue()).hasSize(2);
     }
 
@@ -158,7 +161,7 @@ class AlumniServiceImplTest {
 
         // Assert
         assertThat(result).isEmpty();
-        verify(alumniRepository, never()).saveAll(anyList());
+        verify(persistenceService, never()).saveAll(anyList());
     }
 
     @Test
@@ -173,7 +176,7 @@ class AlumniServiceImplTest {
                 .isInstanceOf(PhantomBusterException.class)
                 .hasMessageContaining("timed out");
 
-        verify(alumniRepository, never()).saveAll(anyList());
+        verify(persistenceService, never()).saveAll(anyList());
     }
 
     @Test
@@ -190,7 +193,7 @@ class AlumniServiceImplTest {
 
         // Assert — nothing saved, empty response
         assertThat(result).isEmpty();
-        verify(alumniRepository, never()).saveAll(anyList());
+        verify(persistenceService, never()).saveAll(anyList());
         verify(alumniMapper, never()).toEntity(any(), any(), any());
     }
 
@@ -204,7 +207,7 @@ class AlumniServiceImplTest {
                 .thenReturn(List.of(sampleProfile));
         when(alumniMapper.toEntity(sampleProfile, "University of XYZ", null))
                 .thenReturn(sampleEntity);
-        when(alumniRepository.saveAll(anyList()))
+        when(persistenceService.saveAll(anyList()))
                 .thenReturn(List.of(sampleEntity));
         when(alumniMapper.toResponse(sampleEntity))
                 .thenReturn(sampleResponse);
@@ -215,7 +218,7 @@ class AlumniServiceImplTest {
         // Assert — saved without hitting findByProfileUrl
         assertThat(result).hasSize(1);
         verify(alumniRepository, never()).findByProfileUrl(any());
-        verify(alumniRepository).saveAll(anyList());
+        verify(persistenceService).saveAll(anyList());
     }
 
     @Test
@@ -234,7 +237,7 @@ class AlumniServiceImplTest {
                 .thenReturn(Optional.empty());
         when(alumniMapper.toEntity(sampleProfile, "University of XYZ", 2020))
                 .thenReturn(sampleEntity);
-        when(alumniRepository.saveAll(anyList()))
+        when(persistenceService.saveAll(anyList()))
                 .thenReturn(List.of(sampleEntity));
         when(alumniMapper.toResponse(sampleEntity))
                 .thenReturn(sampleResponse);
